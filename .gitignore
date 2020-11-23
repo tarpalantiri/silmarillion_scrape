@@ -144,9 +144,9 @@ dmypy.json
 
 # project specific
 
-.csv
-.ipynb
-.txt
-.pkl
+*.csv
+*.ipynb
+*.txt
+*.pkl
 .vscode
 # End of https://www.toptal.com/developers/gitignore/api/python

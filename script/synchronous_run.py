@@ -1,7 +1,6 @@
 __version__ = '1.0'
 __author__ = 'Tehseen Sajjad'
 
-import numpy
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup

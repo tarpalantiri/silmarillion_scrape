@@ -1,7 +1,6 @@
 __version__ = '1.0'
 __author__ = 'Tehseen Sajjad'
 
-from os import abspath
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -13,8 +12,8 @@ CHARS_PAGE_SUFFIX = 'wiki/Category:The_Silmarillion_Characters'
 CHARACTERS_PAGE = HOST_URL + '/' + CHARS_PAGE_SUFFIX
 
 # FILENAMES/PLACEHOLDERS
-CSV_FILEPATH = abspath('output/character_races.csv')
-PICKLE_FILEPATH = abspath('output/character_races.pkl')
+CSV_FILENAME = 'character_races.csv'
+PICKLE_FILENAME = 'character_races.pkl'
 
 
 # Threaded GET
@@ -77,5 +76,5 @@ dataFrame = pd.DataFrame(
     }
 )
 
-dataFrame.to_pickle(PICKLE_FILEPATH)
-dataFrame.to_csv(CSV_FILEPATH)
+dataFrame.to_pickle(PICKLE_FILENAME)
+dataFrame.to_csv(CSV_FILENAME)

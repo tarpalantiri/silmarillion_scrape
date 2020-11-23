@@ -92,4 +92,6 @@ log(UNICODE_CHECKMARK, f'DATA PICKLED TO {DATA_DUMP_FILENAME}.pkl')
 # Save to a csv
 df.to_csv(DATA_DUMP_FILENAME+'.csv', index=False)
 log(UNICODE_CHECKMARK, f'DATA SAVED TO {DATA_DUMP_FILENAME}.csv')
-        
+
+if __name__ == '__main__':
+    print('Launch the script via Terminal/CMD :)')        

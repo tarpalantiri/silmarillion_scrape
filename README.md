@@ -1,0 +1,1 @@
+python script to extract Names and their races from lotr.fandom.com's silmarillion characters page

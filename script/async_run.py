@@ -77,6 +77,5 @@ dataFrame = pd.DataFrame(
     }
 )
 
-os.path.abspath('output/testfile.txt')
 dataFrame.to_pickle(PICKLE_FILEPATH)
 dataFrame.to_csv(CSV_FILEPATH)

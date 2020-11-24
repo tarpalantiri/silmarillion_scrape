@@ -1,8 +1,8 @@
-__version__ = '1.0'
+__version__ = '0.1'
 __author__ = 'Tehseen Sajjad'
 
 import requests
-import pandas as pd
+import pandas
 from bs4 import BeautifulSoup
 from requests_futures.sessions import FuturesSession
 
@@ -27,23 +27,47 @@ def makeSoups(url_list):
         result = each_session.result()
         soups.append(BeautifulSoup(result.content, 'lxml'))
     return soups
+# OLD, RACE ONLY
+# def getBio(soup):
+#     name = soup.find('h1', {
+#         'class' : 'page-header__title'
+#         }).text
+#     sidebar = soup.find('aside', {
+#         'role' : 'region'
+#     })
+#     if sidebar:
+#         adjacent_h2 = soup.find('h2', text='Physical description')
+#         race = adjacent_h2.find_next('a').text
+#     else:
+#         race = 0
+#     return name, race
 
-def getNameAndRace(soup):
-    name = soup.find('h1', {
-        'class' : 'page-header__title'
-        }).text
-    sidebar = soup.find('aside', {
-        'role' : 'region'
-    })
-    if sidebar:
-        adjacent_h2 = soup.find('h2', text='Physical description')
-        race = adjacent_h2.find_next('a').text
-    else:
-        race = 0
-    return name, race
+def getBios(soupsList):
+    listOfBios: dict = list()
+    for soup in soupsList:
+        bioHash = dict()
+        name = soup.find('h1', {
+            'class' : 'page-header__title'
+            }).text
+        sidebar = soup.find('aside', {
+            'role' : 'region'
+        })
+        bioHash['Name'] = name
+        if sidebar:
+            property_list = sidebar.findAll('h3')
+            for prop in property_list:
+                bioHash[prop.text] = prop.find_next('div').text
+            listOfBios.append(bioHash)
+        else:
+            listOfBios.append(None)
+    return listOfBios
 
 
 if __name__ == '__main__':
+    dfColumns = ['Name', 'Other names', 'Titles','Birth', 'Rule', 'Death', 'Realms',
+    'Spouse', 'Children', 'Parentage', 'Siblings', 'Weapon', 'Race', 'Height',
+    'Hair', 'Eyes', 'Culture', 'Actor', 'Voice']
+    MAIN_DATAFRAME = pandas.DataFrame(columns=dfColumns)
     mainPage = None
     try:
         mainPageResponse = requests.get(CHARACTERS_PAGE)
@@ -61,20 +85,9 @@ if __name__ == '__main__':
         characterLinksList.append(link)
 
     characterPagesList = makeSoups(characterLinksList)
-
-    characterInfo = dict()
-
-    for characterPage in characterPagesList:
-        name, race = getNameAndRace(characterPage)
-        print(name, race)
-        characterInfo[name] = race
-
-    dataFrame = pd.DataFrame(
-        data={
-            'Name' : list(characterInfo.keys()),
-            "Race" : list(characterInfo.values())
-        }
-    )
-
-    dataFrame.to_pickle(PICKLE_FILENAME)
-    dataFrame.to_csv(CSV_FILENAME)
+    characterBiosList = getBios(characterPagesList)
+    df = pandas.DataFrame([
+        pandas.Series(eachBioDict) for eachBioDict in characterBiosList
+    ])
+    df.to_pickle('bios_dataframe.pkl')
+    df.to_csv('silmarillion_scrape.csv')

@@ -43,38 +43,38 @@ def getNameAndRace(soup):
     return name, race
 
 
+if __name__ == '__main__':
+    mainPage = None
+    try:
+        mainPageResponse = requests.get(CHARACTERS_PAGE)
+        mainPage = BeautifulSoup(mainPageResponse.content, 'lxml')
+    except Exception as e:
+        print('[ERROR] Coudnt GET the main page')
+        print(e.message)
+        input('...')
 
-mainPage = None
-try:
-    mainPageResponse = requests.get(CHARACTERS_PAGE)
-    mainPage = BeautifulSoup(mainPageResponse.content, 'lxml')
-except Exception as e:
-    print('[ERROR]')
-    print(e)
-    input('...')
 
+    characterLinksList = list()
+    for atag in mainPage.findAll('a', class_='category-page__member-link'):
+        relative_link = atag['href']
+        link = f"{HOST_URL}{relative_link}"
+        characterLinksList.append(link)
 
-characterLinksList = list()
-for atag in mainPage.findAll('a', class_='category-page__member-link'):
-    relative_link = atag['href']
-    link = f"{HOST_URL}{relative_link}"
-    characterLinksList.append(link)
+    characterPagesList = makeSoups(characterLinksList)
 
-characterPagesList = makeSoups(characterLinksList)
+    characterInfo = dict()
 
-characterInfo = dict()
+    for characterPage in characterPagesList:
+        name, race = getNameAndRace(characterPage)
+        print(name, race)
+        characterInfo[name] = race
 
-for characterPage in characterPagesList:
-    name, race = getNameAndRace(characterPage)
-    print(name, race)
-    characterInfo[name] = race
+    dataFrame = pd.DataFrame(
+        data={
+            'Name' : list(characterInfo.keys()),
+            "Race" : list(characterInfo.values())
+        }
+    )
 
-dataFrame = pd.DataFrame(
-    data={
-        'Name' : list(characterInfo.keys()),
-        "Race" : list(characterInfo.values())
-    }
-)
-
-dataFrame.to_pickle(PICKLE_FILENAME)
-dataFrame.to_csv(CSV_FILENAME)
+    dataFrame.to_pickle(PICKLE_FILENAME)
+    dataFrame.to_csv(CSV_FILENAME)

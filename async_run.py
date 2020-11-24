@@ -69,5 +69,5 @@ if __name__ == '__main__':
     df = pandas.DataFrame([
         pandas.Series(eachBioDict) for eachBioDict in characterBiosList
     ])
-    df.to_pickle('bios_dataframe.pkl')
+    df.to_pickle('bios_dataframe_object')
     df.to_csv('silmarillion_scrape.csv')

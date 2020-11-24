@@ -11,12 +11,7 @@ HOST_URL = 'https://lotr.fandom.com'
 CHARS_PAGE_SUFFIX = 'wiki/Category:The_Silmarillion_Characters'
 CHARACTERS_PAGE = HOST_URL + '/' + CHARS_PAGE_SUFFIX
 
-# FILENAMES/PLACEHOLDERS
-CSV_FILENAME = 'character_races.csv'
-PICKLE_FILENAME = 'character_races.pkl'
 
-
-# Threaded GET
 def makeSoups(url_list):
     session = FuturesSession(max_workers=10)
     session_list = [
@@ -27,20 +22,6 @@ def makeSoups(url_list):
         result = each_session.result()
         soups.append(BeautifulSoup(result.content, 'lxml'))
     return soups
-# OLD, RACE ONLY
-# def getBio(soup):
-#     name = soup.find('h1', {
-#         'class' : 'page-header__title'
-#         }).text
-#     sidebar = soup.find('aside', {
-#         'role' : 'region'
-#     })
-#     if sidebar:
-#         adjacent_h2 = soup.find('h2', text='Physical description')
-#         race = adjacent_h2.find_next('a').text
-#     else:
-#         race = 0
-#     return name, race
 
 def getBios(soupsList):
     listOfBios: dict = list()
@@ -76,7 +57,6 @@ if __name__ == '__main__':
         print('[ERROR] Coudnt GET the main page')
         print(e.message)
         input('...')
-
 
     characterLinksList = list()
     for atag in mainPage.findAll('a', class_='category-page__member-link'):
